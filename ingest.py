@@ -3,11 +3,11 @@ from langchain.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 
-DATA_PATH="."
-DB_FAISS_PATH="vectorstores/db_faiss"
+DATA_PATH="./Physicsbot/"
+DB_FAISS_PATH="vectorstore/db_faiss"
 
 def create_vector_db():
-    loader = DirectoryLoader(DATA_PATH,glob="11th_physics.pdf", loader_cls=PyPDFLoader)
+    loader = DirectoryLoader(DATA_PATH,glob="*.pdf", loader_cls=PyPDFLoader)
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     texts = text_splitter.split_documents(documents)

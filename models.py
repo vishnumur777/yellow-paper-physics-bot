@@ -36,10 +36,10 @@ def retrieval_qa_chain(llm, prompt, db):
 def load_llm():
     # Load the locally downloaded model here
     llm = CTransformers(
-        model = "llama-2-13b-chat.ggmlv3.q8_0.bin",
+        model = "llama-2-7b-chat.ggmlv3.q2_K.bin",
         model_type="llama",
-        max_new_tokens = 512,
-        temperature = 0.5
+        max_new_tokens = 256,
+        temperature = 0.1
     )
     return llm
 
@@ -58,30 +58,5 @@ def final_result(query):
     response = qa_result({'query': query})
     return response
 
-@cl.on_chat_start
-async def start():
-    chain = qa_bot()
-    msg = cl.Message(content="Starting the bot...")
-    await msg.send()
-    msg.content = "Hi, Welcome to Medical Bot. What is your query?"
-    await msg.update()
-
-    cl.user_session.set("chain", chain)
-
-@cl.on_message
-async def main(message):
-    chain = cl.user_session.get("chain") 
-    cb = cl.AsyncLangchainCallbackHandler(
-        stream_final_answer=True, answer_prefix_tokens=["FINAL", "ANSWER"]
-    )
-    cb.answer_reached = True
-    res = await chain.acall(message, callbacks=[cb])
-    answer = res["result"]
-    sources = res["source_documents"]
-
-    if sources:
-        answer += f"\nSources:" + str(sources)
-    else:
-        answer += "\nNo sources found"
-
-    await cl.Message(content=answer).send()
+f=final_result("What are some examples for surface tension?")
+print(f)
